@@ -8,5 +8,11 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('access-control-system');
+  title = 'access-control-dashboard';
+
+  ngOnInit(): void {
+    // Perfect hook location for initializing global app state telemetry 
+    // or triggering configuration handshakes in the future.
+    console.log('🛡️ AccessOS Control Core Engine Initialized.');
+  }
 }

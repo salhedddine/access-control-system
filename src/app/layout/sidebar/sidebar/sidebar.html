@@ -1,0 +1,20 @@
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <span class="system-status">● System Secure</span>
+  </div>
+  
+  <nav class="sidebar-nav">
+    @for (item of navItems; track item.route) {
+      <a [routerLink]="item.route" 
+         routerLinkActive="active-link" 
+         class="nav-item">
+        <span class="nav-icon">{{ item.icon }}</span>
+        <span class="nav-label">{{ item.label }}</span>
+      </a>
+    }
+  </nav>
+
+  <div class="sidebar-footer">
+    <span class="version">v2026.1.0</span>
+  </div>
+</aside>

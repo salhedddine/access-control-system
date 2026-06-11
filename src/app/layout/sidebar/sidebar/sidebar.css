@@ -1,0 +1,75 @@
+.sidebar {
+  width: 260px;
+  height: 100vh;
+  background: #0f172a; /* Deep Slate Professional Dark Theme */
+  color: #94a3b8;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  border-right: 1px solid #1e293b;
+  z-index: 11;
+}
+
+.sidebar-header {
+  padding: 1.5rem;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #1e293b;
+}
+
+.system-status {
+  font-size: 0.75rem;
+  color: #10b981; /* Emerald Green */
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  color: #94a3b8;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.nav-item:hover {
+  background: #1e293b;
+  color: #f8fafc;
+}
+
+.nav-icon {
+  font-size: 1.2rem;
+}
+
+/* Styled active route link */
+.active-link {
+  background: #3b82f6 !important; /* Premium Angular Blue */
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.sidebar-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #1e293b;
+}
+
+.version {
+  font-size: 0.7rem;
+  color: #475569;
+}
