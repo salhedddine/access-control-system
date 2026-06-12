@@ -1,0 +1,20 @@
+<div class="kpi-grid">
+  @for (card of kpis(); track card.title) {
+    <div class="kpi-card">
+      <div class="kpi-main">
+        <div class="kpi-info">
+          <span class="kpi-title">{{ card.title }}</span>
+          <h3 class="kpi-value">{{ card.value }}</h3>
+        </div>
+        <div class="kpi-icon-wrapper" [className]="'kpi-icon-wrapper ' + card.colorClass">
+          {{ card.icon }}
+        </div>
+      </div>
+      <div class="kpi-footer">
+        <span [class.positive]="card.isPositive" [class.negative]="!card.isPositive">
+          {{ card.isPositive ? '↑' : '↓' }} {{ card.change }}
+        </span>
+      </div>
+    </div>
+  }
+</div>

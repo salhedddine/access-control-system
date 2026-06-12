@@ -7,10 +7,10 @@ export const routes: Routes = [
     component: Layout,
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-    //   { 
-    //     path: 'dashboard', 
-    //     loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent) 
-    //   },
+      { 
+        path: 'dashboard', 
+        loadComponent: () => import('./features/dashboard/dashboard/dashboard').then(m => m.Dashboard) 
+      },
     //   { 
     //     path: 'users', 
     //     loadComponent: () => import('./features/users/users.component').then(m => m.UsersComponent) 

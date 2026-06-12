@@ -1,0 +1,30 @@
+<div class="alerts-container">
+  <div class="panel-header">
+    <div class="title-area">
+      <h3>Live Security Alerts</h3>
+      <span class="pulse-indicator"></span>
+    </div>
+    <button class="text-action-btn">Clear All</button>
+  </div>
+
+  <div class="alerts-list">
+    @for (alert of alerts(); track alert.id) {
+      <div class="alert-item" [ngClass]="alert.type">
+        <div class="alert-indicator">
+          @if (alert.type === 'critical') { 🔴 } @else { 🟠 }
+        </div>
+        <div class="alert-body">
+          <p class="alert-msg">{{ alert.message }}</p>
+          <div class="alert-meta">
+            <span class="alert-loc">📍 {{ alert.location }}</span>
+            <span class="alert-time">{{ alert.timestamp }}</span>
+          </div>
+        </div>
+      </div>
+    } @empty {
+      <div class="empty-state">
+        🟩 All systems operational. No active exceptions.
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,30 @@
+.dashboard-wrapper {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.grid-span-5 {
+  grid-column: span 5;
+}
+
+.grid-span-7 {
+  grid-column: span 7;
+}
+
+/* Adaptive breakpoint response */
+@media (max-width: 1024px) {
+  .grid-span-5, .grid-span-7 {
+    grid-column: span 12;
+  }
+}

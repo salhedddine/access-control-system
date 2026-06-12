@@ -1,0 +1,37 @@
+<div class="device-container">
+  <div class="panel-header">
+    <h3>ESP32 Hardware Nodes</h3>
+    <span class="count-pill">{{ devices().length }} Total</span>
+  </div>
+
+  <div class="table-responsive">
+    <table class="status-table">
+      <thead>
+        <tr>
+          <th>Node Alias</th>
+          <th>IP Address</th>
+          <th>Status</th>
+          <th>Heartbeat</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (node of devices(); track node.mac) {
+          <tr>
+            <td class="node-name">
+              <span class="mac-badge">{{ node.mac.substring(12) }}</span>
+              {{ node.alias }}
+            </td>
+            <td class="mono">{{ node.ipAddress }}</td>
+            <td>
+              <span class="status-pill" [ngClass]="node.status">
+                <span class="dot"></span>
+                {{ node.status | titlecase }}
+              </span>
+            </td>
+            <td class="muted">{{ node.lastSeen }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
