@@ -11,22 +11,22 @@ export const routes: Routes = [
         path: 'dashboard', 
         loadComponent: () => import('./features/dashboard/dashboard/dashboard').then(m => m.Dashboard) 
       },
-    //   { 
-    //     path: 'users', 
-    //     loadComponent: () => import('./features/users/users.component').then(m => m.UsersComponent) 
-    //   },
-    //   { 
-    //     path: 'devices', 
-    //     loadComponent: () => import('./features/devices/devices.component').then(m => m.DevicesComponent) 
-    //   },
-    //   { 
-    //     path: 'logs', 
-    //     loadComponent: () => import('./features/logs/logs.component').then(m => m.LogsComponent) 
-    //   },
-    //   { 
-    //     path: 'access-control', 
-    //     loadComponent: () => import('./features/access-control/access-control.component').then(m => m.AccessControlComponent) 
-    //   },
+      { 
+        path: 'users', 
+        loadComponent: () => import('./features/users/users/users').then(m => m.Users) 
+      },
+      { 
+        path: 'devices', 
+        loadComponent: () => import('./features/devices/devices/devices').then(m => m.Devices) 
+      },
+      { 
+        path: 'logs', 
+        loadComponent: () => import('./features/logs/logs/logs').then(m => m.Logs) 
+      },
+      { 
+        path: 'access-control', 
+        loadComponent: () => import('./features/access-control/access-control').then(m => m.AccessControl) 
+      },
     ]
   }
 ];

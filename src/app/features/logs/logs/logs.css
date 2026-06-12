@@ -1,0 +1,10 @@
+.filter-toolbar { display: flex; gap: 1rem; margin-bottom: 1.5rem; background: white; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 12px; }
+.search-box { flex: 1; display: flex; align-items: center; gap: 0.5rem; background: #f8fafc; border: 1px solid #cbd5e1; padding: 0.4rem 0.75rem; border-radius: 8px; }
+.search-box input { border: none; background: transparent; width: 100%; outline: none; font-size: 0.875rem; }
+.dropdown-filter select { padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 8px; background: white; font-size: 0.875rem; outline: none; }
+
+.decision-pill { font-size: 0.7rem; font-weight: 700; padding: 0.25rem 0.5rem; border-radius: 4px; display: inline-block; }
+.decision-pill[data-result="GRANTED"] { background: #d1fae5; color: #065f46; }
+.decision-pill[data-result="DENIED"] { background: #fee2e2; color: #991b1b; }
+.reason-text { color: #64748b; font-size: 0.8rem; }
+.empty-row { text-align: center; padding: 3rem !important; color: #94a3b8; }

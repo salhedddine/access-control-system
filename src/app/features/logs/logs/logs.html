@@ -1,0 +1,49 @@
+<div class="page-container">
+  <div class="filter-toolbar">
+    <div class="search-box">
+      🔎 <input type="text" [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)" placeholder="Filter by User, Device Node, or Token Card UID..." />
+    </div>
+    <div class="dropdown-filter">
+      <select [ngModel]="filterResult()" (ngModelChange)="filterResult.set($event)">
+        <option value="ALL">Show All Decisions</option>
+        <option value="GRANTED">🟢 Granted Authorizations Only</option>
+        <option value="DENIED">🔴 Denied Access Infractions Only</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <table class="app-table">
+      <thead>
+        <tr>
+          <th>System Timestamp</th>
+          <th>Subject Context</th>
+          <th>Hardware Target Destination</th>
+          <th>Transmitted Token</th>
+          <th>Decision Event</th>
+          <th>Security Reason Message</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (log of filteredLogs(); track log.id) {
+          <tr>
+            <td class="mono-text">{{ log.timestamp }}</td>
+            <td><strong>{{ log.username }}</strong></td>
+            <td>🖥️ {{ log.deviceAlias }}</td>
+            <td><code class="uid-tag">{{ log.cardUid }}</code></td>
+            <td>
+              <span class="decision-pill" [attr.data-result]="log.result">
+                {{ log.result }}
+              </span>
+            </td>
+            <td class="reason-text">{{ log.reason }}</td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6" class="empty-row">No live system hardware logs match your filtering query variables.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

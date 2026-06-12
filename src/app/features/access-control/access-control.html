@@ -1,0 +1,55 @@
+<div class="page-container">
+  <div class="control-grid">
+    <div class="rule-builder">
+      <h3>Policy Engine Matrix Builder</h3>
+      <p class="subtitle">Enforce conditions bridging clearance assignments to perimeter points.</p>
+      
+      <div class="vertical-form">
+        <div class="input-block">
+          <label>Policy Strategy Rule Label</label>
+          <input type="text" [(ngModel)]="newRuleName" placeholder="e.g. Off-hours Server Diagnostics" />
+        </div>
+        <div class="input-block">
+          <label>Clearance Role Target Assignment</label>
+          <select [(ngModel)]="newRuleRole">
+            <option value="Super Admin">Super Admin</option>
+            <option value="Operator">Operator</option>
+            <option value="Employee">Employee</option>
+            <option value="Contractor">Contractor</option>
+          </select>
+        </div>
+        <div class="input-block">
+          <label>Active Cron Scheduling Window</label>
+          <input type="text" [(ngModel)]="newRuleTime" placeholder="e.g. Mon-Sun 06:00 - 14:00" />
+        </div>
+        <button class="primary-btn-block" (click)="addRule()">Deploy Access Policy Rule</button>
+      </div>
+    </div>
+
+    <div class="rules-display-list">
+      <h3>Deployed Access Rules Engine Mappings</h3>
+      <div class="rules-stack">
+        @for (rule of rules(); track rule.id) {
+          <div class="rule-item-card" [class.disabled]="!rule.isActive">
+            <div class="rule-card-header">
+              <div>
+                <span class="rule-id-tag">{{ rule.id }}</span>
+                <h4>{{ rule.name }}</h4>
+              </div>
+              <label class="switch">
+                <input type="checkbox" [checked]="rule.isActive" (change)="toggleRule(rule.id)">
+                <span class="slider round"></span>
+              </label>
+            </div>
+            
+            <div class="rule-meta-details">
+              <div><strong>Clearance Target:</strong> <span class="badge">{{ rule.targetRole }}</span></div>
+              <div><strong>Permitted Edge Nodes:</strong> <span class="doors-string">{{ rule.allowedDoors.join(', ') }}</span></div>
+              <div><strong>Cron Schedule Window:</strong> <span class="time-string">⏳ {{ rule.timeWindow }}</span></div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

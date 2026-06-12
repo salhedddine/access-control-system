@@ -1,0 +1,89 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h2>Identity Management</h2>
+      <p class="subtitle">Provision system users, assign card credentials, and map authorization roles.</p>
+    </div>
+    <button class="primary-btn" (click)="toggleForm()">
+      {{ showForm() ? 'Close Panel' : '➕ Add New User' }}
+    </button>
+  </div>
+
+  @if (showForm()) {
+    <div class="form-panel-overlay">
+      <div class="form-card">
+        <h3>User Provisioning Profile</h3>
+        <div class="form-grid">
+          <div class="input-group">
+            <label>Full Name</label>
+            <input type="text" [(ngModel)]="newUser.name" placeholder="e.g. Marcus Wright" />
+          </div>
+          <div class="input-group">
+            <label>Corporate Email</label>
+            <input type="email" [(ngModel)]="newUser.email" placeholder="m.wright@company.com" />
+          </div>
+          <div class="input-group">
+            <label>Access Rule Clearance Role</label>
+            <select [(ngModel)]="newUser.role">
+              <option value="Super Admin">Super Admin</option>
+              <option value="Operator">Operator</option>
+              <option value="Employee">Employee</option>
+              <option value="Contractor">Contractor</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>NFC / RFID Card UID Mapping</label>
+            <input type="text" [(ngModel)]="newUser.cardUid" placeholder="e.g. F3:2B:88:AA" />
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="secondary-btn" (click)="resetForm()">Cancel</button>
+          <button class="action-btn" (click)="saveUser()">Commit Assignment</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <div class="table-container">
+    <table class="app-table">
+      <thead>
+        <tr>
+          <th>User ID</th>
+          <th>Identity Reference</th>
+          <th>Assigned Role</th>
+          <th>Hardware RFID Tokens</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (user of users(); track user.id) {
+          <tr>
+            <td class="mono-text">{{ user.id }}</td>
+            <td>
+              <div class="identity-cell">
+                <span class="user-initials">{{ user.name.charAt(0) }}</span>
+                <div class="meta">
+                  <strong>{{ user.name }}</strong>
+                  <span>{{ user.email }}</span>
+                </div>
+              </div>
+            </td>
+            <td><span class="role-badge" [attr.data-role]="user.role">{{ user.role }}</span></td>
+            <td><code class="uid-tag">{{ user.cardUid }}</code></td>
+            <td>
+              <span class="status-indicator" [class.suspended]="user.status === 'Suspended'">
+                {{ user.status }}
+              </span>
+            </td>
+            <td>
+              <button class="table-action" (click)="toggleStatus(user.id)">
+                {{ user.status === 'Active' ? '🚫 Suspend' : '✅ Activate' }}
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

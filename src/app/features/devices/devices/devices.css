@@ -1,0 +1,34 @@
+.devices-layout { display: flex; gap: 1.5rem; }
+.main-content { flex: 1; display: flex; flex-direction: column; gap: 1.5rem; }
+.section-card { background: white; border: 1px solid #e2e8f0; padding: 1.5rem; border-radius: 12px; }
+.section-card h3 { margin: 0 0 1rem 0; font-size: 1rem; color: #0f172a; }
+
+.registration-inline-form { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+.registration-inline-form input { flex: 1; min-width: 180px; padding: 0.55rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.875rem; }
+
+.devices-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+.device-node-card { background: white; border: 1px solid #e2e8f0; padding: 1.25rem; border-radius: 12px; cursor: pointer; transition: all 0.2s; }
+.device-node-card:hover { border-color: #3b82f6; transform: translateY(-1px); }
+.device-node-card.selected { border-color: #3b82f6; background: #eff6ff; }
+
+.card-top { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+.card-top h4 { margin: 0; font-size: 0.95rem; color: #1e293b; }
+.pulse-dot { width: 8px; height: 8px; border-radius: 50%; }
+.pulse-dot[data-status="online"] { background: #10b981; }
+.pulse-dot[data-status="offline"] { background: #ef4444; }
+
+.mac-addr { margin: 0 0 1rem 0; font-size: 0.8rem; }
+.card-footer { display: flex; justify-content: space-between; font-size: 0.75rem; color: #64748b; }
+
+.side-detail-panel { width: 320px; background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.5rem; position: sticky; top: 90px; height: fit-content; }
+.detail-header { display: flex; justify-content: space-between; align-items: center; }
+.detail-header h3 { margin: 0; font-size: 1rem; color: #0f172a; }
+.close-btn { background: none; border: none; font-size: 1rem; cursor: pointer; color: #94a3b8; }
+.stat-row { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 0.6rem 0; border-bottom: 1px solid #f1f5f9; }
+.stat-row label { color: #64748b; font-weight: 500; }
+.code-block { font-family: monospace; background: #f1f5f9; padding: 0.1rem 0.3rem; border-radius: 4px; }
+
+.terminal-actions { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1.5rem; }
+.tool-btn { border: 1px solid #cbd5e1; background: white; padding: 0.5rem; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 500; }
+.tool-btn.hazard { border-color: #fca5a5; color: #dc2626; }
+.tool-btn:hover { background: #f8fafc; }

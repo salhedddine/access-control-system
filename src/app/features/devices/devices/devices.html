@@ -1,0 +1,55 @@
+<div class="devices-layout">
+  <div class="main-content">
+    <div class="section-card">
+      <h3>Register ESP32 Authentication Reader</h3>
+      <div class="registration-inline-form">
+        <input type="text" [(ngModel)]="newDevice.mac" placeholder="Hardware MAC (e.g. AA:BB:CC:...)" />
+        <input type="text" [(ngModel)]="newDevice.alias" placeholder="Device Label Location" />
+        <input type="text" [(ngModel)]="newDevice.assignedDoor" placeholder="Controls Physical Portal Target" />
+        <button class="primary-btn" (click)="registerReader()">Register Node</button>
+      </div>
+    </div>
+
+    <div class="devices-grid">
+      @for (dev of devices(); track dev.mac) {
+        <div class="device-node-card" [class.selected]="selectedDevice()?.mac === dev.mac" (click)="viewDetail(dev)">
+          <div class="card-top">
+            <span class="pulse-dot" [attr.data-status]="dev.status"></span>
+            <h4>{{ dev.alias }}</h4>
+          </div>
+          <p class="mac-addr"><code>{{ dev.mac }}</code></p>
+          <div class="card-footer">
+            <span>Target: 🚪 {{ dev.assignedDoor }}</span>
+            <span>{{ dev.status === 'online' ? dev.signalStrength + ' dBm' : 'Disconnected' }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  @if (selectedDevice(); as device) {
+    <div class="side-detail-panel">
+      <div class="detail-header">
+        <h3>Node Diagnostic Data</h3>
+        <button class="close-btn" (click)="closeDetail()">✕</button>
+      </div>
+      <hr />
+      <div class="detail-body">
+        <div class="stat-row"><label>Logical Label:</label> <span>{{ device.alias }}</span></div>
+        <div class="stat-row"><label>Physical MAC ID:</label> <code class="code-block">{{ device.mac }}</code></div>
+        <div class="stat-row"><label>Assigned Portal:</label> <span>{{ device.assignedDoor }}</span></div>
+        <div class="stat-row"><label>Active Firmware:</label> <span>{{ device.firmware }}</span></div>
+        <div class="stat-row">
+          <label>Network Status:</label> 
+          <span class="status-pill" [attr.data-status]="device.status">{{ device.status }}</span>
+        </div>
+        <div class="stat-row"><label>RSSI Wi-Fi Index:</label> <span>{{ device.signalStrength }} dBm</span></div>
+        
+        <div class="terminal-actions">
+          <button class="tool-btn">🔄 Force OTA Reboot</button>
+          <button class="tool-btn hazard">⚠️ Flash Clear Keys</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>
