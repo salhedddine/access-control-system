@@ -1,55 +1,278 @@
-<div class="devices-layout">
-  <div class="main-content">
-    <div class="section-card">
-      <h3>Register ESP32 Authentication Reader</h3>
-      <div class="registration-inline-form">
-        <input type="text" [(ngModel)]="newDevice.mac" placeholder="Hardware MAC (e.g. AA:BB:CC:...)" />
-        <input type="text" [(ngModel)]="newDevice.alias" placeholder="Device Label Location" />
-        <input type="text" [(ngModel)]="newDevice.assignedDoor" placeholder="Controls Physical Portal Target" />
-        <button class="primary-btn" (click)="registerReader()">Register Node</button>
-      </div>
+<div class="devices-page">
+
+  <!-- Top summary -->
+  <section class="summary-grid">
+    <div class="summary-card">
+      <span class="summary-label">Doors</span>
+      <strong>{{ summary().totalDoors }}</strong>
     </div>
 
-    <div class="devices-grid">
-      @for (dev of devices(); track dev.mac) {
-        <div class="device-node-card" [class.selected]="selectedDevice()?.mac === dev.mac" (click)="viewDetail(dev)">
-          <div class="card-top">
-            <span class="pulse-dot" [attr.data-status]="dev.status"></span>
-            <h4>{{ dev.alias }}</h4>
-          </div>
-          <p class="mac-addr"><code>{{ dev.mac }}</code></p>
-          <div class="card-footer">
-            <span>Target: 🚪 {{ dev.assignedDoor }}</span>
-            <span>{{ dev.status === 'online' ? dev.signalStrength + ' dBm' : 'Disconnected' }}</span>
-          </div>
+    <div class="summary-card">
+      <span class="summary-label">Controllers</span>
+      <strong>{{ summary().totalControllers }}</strong>
+    </div>
+
+    <div class="summary-card online">
+      <span class="summary-label">Online</span>
+      <strong>{{ summary().onlineControllers }}</strong>
+    </div>
+
+    <div class="summary-card offline">
+      <span class="summary-label">Offline</span>
+      <strong>{{ summary().offlineControllers }}</strong>
+    </div>
+
+    <div class="summary-card error">
+      <span class="summary-label">Error</span>
+      <strong>{{ summary().errorControllers }}</strong>
+    </div>
+
+    <div class="summary-card healthy">
+      <span class="summary-label">Healthy Doors</span>
+      <strong>{{ summary().doorsHealthy }}</strong>
+    </div>
+
+    <div class="summary-card degraded">
+      <span class="summary-label">Degraded Doors</span>
+      <strong>{{ summary().doorsDegraded }}</strong>
+    </div>
+
+    <div class="summary-card error">
+      <span class="summary-label">Critical Doors</span>
+      <strong>{{ summary().doorsError }}</strong>
+    </div>
+  </section>
+
+  <!-- Alerts -->
+  <section class="alerts-strip">
+    <div class="alert-badge critical">
+      🔴 Critical Alerts: {{ criticalAlertsCount() }}
+    </div>
+
+    <div class="alert-badge warning">
+      🟠 Warnings: {{ warningAlertsCount() }}
+    </div>
+  </section>
+
+  <div class="devices-layout">
+    <div class="main-content">
+
+      <!-- Registration -->
+      <section class="section-card">
+        <h3>Register Door Controller</h3>
+
+        <div class="registration-inline-form">
+          <input
+            type="text"
+            [(ngModel)]="newController.mac"
+            placeholder="Hardware MAC (e.g. AA:BB:CC:DD:EE:FF)"
+          />
+
+          <input
+            type="text"
+            [(ngModel)]="newController.alias"
+            placeholder="Controller alias / location label"
+          />
+
+          <input
+            type="text"
+            [(ngModel)]="newController.doorId"
+            placeholder="Door ID (e.g. vault-01)"
+          />
+
+          <input
+            type="text"
+            [(ngModel)]="newController.doorName"
+            placeholder="Door name (e.g. Main Server Vault)"
+          />
+
+          <button class="primary-btn" (click)="registerController()">
+            Register Controller
+          </button>
         </div>
+
+        @if (formError()) {
+          <p class="form-error">{{ formError() }}</p>
+        }
+
+        <p class="form-helper">
+          Each controller represents <strong>one door</strong> and reports the health
+          of the connected <strong>IN</strong> and <strong>OUT</strong> readers.
+        </p>
+      </section>
+
+      <!-- Current alerts -->
+      @if (alerts().length > 0) {
+        <section class="section-card">
+          <h3>Current Device Alerts</h3>
+
+          <div class="alerts-list">
+            @for (alert of alerts(); track alert.controllerId + alert.message) {
+              <div class="alert-row" [attr.data-level]="alert.level">
+                <div class="alert-dot"></div>
+                <div class="alert-content">
+                  <strong>{{ alert.message }}</strong>
+                  <span>Door ID: {{ alert.doorId }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        </section>
       }
-    </div>
-  </div>
 
-  @if (selectedDevice(); as device) {
-    <div class="side-detail-panel">
-      <div class="detail-header">
-        <h3>Node Diagnostic Data</h3>
-        <button class="close-btn" (click)="closeDetail()">✕</button>
-      </div>
-      <hr />
-      <div class="detail-body">
-        <div class="stat-row"><label>Logical Label:</label> <span>{{ device.alias }}</span></div>
-        <div class="stat-row"><label>Physical MAC ID:</label> <code class="code-block">{{ device.mac }}</code></div>
-        <div class="stat-row"><label>Assigned Portal:</label> <span>{{ device.assignedDoor }}</span></div>
-        <div class="stat-row"><label>Active Firmware:</label> <span>{{ device.firmware }}</span></div>
-        <div class="stat-row">
-          <label>Network Status:</label> 
-          <span class="status-pill" [attr.data-status]="device.status">{{ device.status }}</span>
-        </div>
-        <div class="stat-row"><label>RSSI Wi-Fi Index:</label> <span>{{ device.signalStrength }} dBm</span></div>
-        
-        <div class="terminal-actions">
-          <button class="tool-btn">🔄 Force OTA Reboot</button>
-          <button class="tool-btn hazard">⚠️ Flash Clear Keys</button>
-        </div>
-      </div>
+      <!-- Controllers grid -->
+      <section class="controllers-grid">
+        @for (controller of controllers(); track controller.id) {
+          <article
+            class="controller-card"
+            [class.selected]="selectedController()?.id === controller.id"
+            (click)="openDetail(controller.id)"
+          >
+            <div class="controller-header">
+              <div>
+                <h4>{{ controller.doorName }}</h4>
+                <p class="controller-subtitle">{{ controller.alias }}</p>
+              </div>
+
+              <span class="health-pill" [attr.data-health]="controller.doorHealth">
+                {{ controller.doorHealth }}
+              </span>
+            </div>
+
+            <p class="meta-row"><code>{{ controller.doorId }}</code></p>
+            <p class="meta-row secondary"><code>{{ controller.mac }}</code></p>
+
+            <div class="controller-status-row">
+              <span class="status-pill" [attr.data-status]="controller.status">
+                {{ controller.status }}
+              </span>
+
+              <span class="signal-text">
+                {{
+                  controller.status === 'online'
+                    ? controller.signalStrength + ' dBm'
+                    : 'Disconnected'
+                }}
+              </span>
+            </div>
+
+            <div class="readers-grid">
+              <div class="reader-box">
+                <span class="reader-title">IN Reader</span>
+                <span class="reader-pill" [attr.data-reader-health]="controller.readers.in">
+                  {{ controller.readers.in }}
+                </span>
+              </div>
+
+              <div class="reader-box">
+                <span class="reader-title">OUT Reader</span>
+                <span class="reader-pill" [attr.data-reader-health]="controller.readers.out">
+                  {{ controller.readers.out }}
+                </span>
+              </div>
+            </div>
+
+            <div class="footer-row">
+              <span>Firmware: {{ controller.firmware }}</span>
+              <span>Last seen: {{ controller.lastSeen }}</span>
+            </div>
+          </article>
+        }
+      </section>
     </div>
-  }
-</div>
+
+    <!-- Detail panel -->
+    @if (selectedController(); as controller) {
+      <aside class="side-detail-panel">
+        <div class="detail-header">
+          <h3>Door Controller Details</h3>
+          <button class="close-btn" (click)="closeDetail()">✕</button>
+        </div>
+
+        <hr />
+
+        <div class="detail-body">
+          <div class="stat-row">
+            <label>Door Name:</label>
+            <span>{{ controller.doorName }}</span>
+          </div>
+
+          <div class="stat-row">
+            <label>Door ID:</label>
+            <code class="code-block">{{ controller.doorId }}</code>
+          </div>
+
+          <div class="stat-row">
+            <label>Controller Alias:</label>
+            <span>{{ controller.alias }}</span>
+          </div>
+
+          <div class="stat-row">
+            <label>MAC Address:</label>
+            <code class="code-block">{{ controller.mac }}</code>
+          </div>
+
+          <div class="stat-row">
+            <label>Firmware:</label>
+            <span>{{ controller.firmware }}</span>
+          </div>
+
+          <div class="stat-row">
+            <label>Controller Status:</label>
+            <span class="status-pill" [attr.data-status]="controller.status">
+              {{ controller.status }}
+            </span>
+          </div>
+
+          <div class="stat-row">
+            <label>Door Health:</label>
+            <span class="health-pill" [attr.data-health]="controller.doorHealth">
+              {{ controller.doorHealth }}
+            </span>
+          </div>
+
+          <div class="stat-row">
+            <label>RSSI Wi‑Fi:</label>
+            <span>{{ controller.signalStrength }} dBm</span>
+          </div>
+
+          <div class="stat-row">
+            <label>Last Seen:</label>
+            <span>{{ controller.lastSeen }}</span>
+          </div>
+
+          <div class="reader-detail-block">
+            <h4>Reader Health</h4>
+
+            <div class="stat-row">
+              <label>IN Reader:</label>
+              <span class="reader-pill" [attr.data-reader-health]="controller.readers.in">
+                {{ controller.readers.in }}
+              </span>
+            </div>
+
+            <div class="stat-row">
+              <label>OUT Reader:</label>
+              <span class="reader-pill" [attr.data-reader-health]="controller.readers.out">
+                {{ controller.readers.out }}
+              </span>
+            </div>
+          </div>
+
+          <div class="terminal-actions">
+            <button class="tool-btn" (click)="onForceReboot(controller.id)">
+              🔄 Force OTA Reboot
+            </button>
+
+            <button class="tool-btn hazard" (click)="onClearKeys(controller.id)">
+              ⚠️ Flash Clear Keys
+            </button>
+
+            <button class="tool-btn destruct" (click)="onRemoveController(controller.id)">
+              🗑 Remove Controller
+            </button>
+          </div>
+        </div>
+      </aside>
+    }
+  </div>

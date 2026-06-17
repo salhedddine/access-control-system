@@ -1,15 +1,7 @@
-import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-
-interface ReaderDevice {
-  mac: string;
-  alias: string;
-  firmware: string;
-  assignedDoor: string;
-  status: 'online' | 'offline' | 'error';
-  signalStrength: number; // dBm
-}
+import { DevicesStore } from '../services/devices.store';
 
 @Component({
   selector: 'app-devices',
@@ -19,36 +11,70 @@ interface ReaderDevice {
   styleUrl: './devices.css',
 })
 export class Devices {
-  selectedDevice = signal<ReaderDevice | null>(null);
+  readonly store = inject(DevicesStore);
 
-  devices = signal<ReaderDevice[]>([
-    { mac: '32:AE:A4:07:0X:11', alias: 'Server Room Core Entrance', firmware: 'v1.4.2-ESP32', assignedDoor: 'Main Server Vault Vault-01', status: 'online', signalStrength: -62 },
-    { mac: '32:AE:A4:07:0X:22', alias: 'Backyard Loading Dock Gate', firmware: 'v1.4.0-ESP32', assignedDoor: 'Loading Dock Exterior Roller', status: 'offline', signalStrength: 0 },
-    { mac: '32:AE:A4:07:0X:33', alias: 'Executive Floor Lobby East', firmware: 'v1.4.2-ESP32', assignedDoor: 'Floor 4 Glass Turnstile', status: 'online', signalStrength: -55 }
-  ]);
+  readonly controllers = this.store.controllersView;
+  readonly selectedController = this.store.selectedController;
+  readonly summary = this.store.summary;
+  readonly alerts = this.store.alerts;
 
-  newDevice = { mac: '', alias: '', assignedDoor: '' };
+  readonly formError = signal<string | null>(null);
 
-  registerReader() {
-    if (!this.newDevice.mac || !this.newDevice.alias) return;
-    const deviceToRegister: ReaderDevice = {
-      mac: this.newDevice.mac.toUpperCase(),
-      alias: this.newDevice.alias,
-      firmware: 'v1.5.0-ESP-STABLE',
-      assignedDoor: this.newDevice.assignedDoor || 'Unassigned Internal Portal',
-      status: 'online',
-      signalStrength: -45
+  newController = {
+    mac: '',
+    alias: '',
+    doorId: '',
+    doorName: '',
+  };
+
+  readonly criticalAlertsCount = computed(
+    () => this.alerts().filter(a => a.level === 'critical').length
+  );
+
+  readonly warningAlertsCount = computed(
+    () => this.alerts().filter(a => a.level === 'warning').length
+  );
+
+  registerController(): void {
+    const result = this.store.registerDoorController(this.newController);
+
+    if (!result.ok) {
+      this.formError.set(result.error);
+      return;
+    }
+
+    this.formError.set(null);
+    this.newController = {
+      mac: '',
+      alias: '',
+      doorId: '',
+      doorName: '',
     };
-
-    this.devices.update(curr => [...curr, deviceToRegister]);
-    this.newDevice = { mac: '', alias: '', assignedDoor: '' };
   }
 
-  viewDetail(device: ReaderDevice) {
-    this.selectedDevice.set(device);
+  openDetail(controllerId: string): void {
+    this.store.selectController(controllerId);
   }
 
-  closeDetail() {
-    this.selectedDevice.set(null);
+  closeDetail(): void {
+    this.store.clearSelection();
+  }
+
+  onForceReboot(controllerId: string): void {
+    this.store.forceOtaReboot(controllerId);
+  }
+
+  onClearKeys(controllerId: string): void {
+    this.store.clearKeys(controllerId);
+  }
+
+  onRemoveController(controllerId: string): void {
+    const confirmed = window.confirm(
+      'Remove this door controller from the system?'
+    );
+
+    if (!confirmed) return;
+
+    this.store.removeController(controllerId);
   }
 }
