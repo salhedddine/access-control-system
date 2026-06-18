@@ -1,30 +1,79 @@
 <div class="page-container">
   <div class="control-grid">
-    <div class="rule-builder">
-      <h3>Policy Engine Matrix Builder</h3>
-      <p class="subtitle">Enforce conditions bridging clearance assignments to perimeter points.</p>
+    
+    <div class="sidebar-stack">
       
-      <div class="vertical-form">
-        <div class="input-block">
-          <label>Policy Strategy Rule Label</label>
-          <input type="text" [(ngModel)]="newRuleName" placeholder="e.g. Off-hours Server Diagnostics" />
+      <div class="rule-builder hardware-terminal">
+        <h3>Physical Credential Provisioning</h3>
+        <p class="subtitle">Lock raw tokens to active profiles using derived AES-128 injection keys.</p>
+        
+        <div class="hardware-status-box" [ngClass]="enrollmentState.toLowerCase()">
+          <div class="status-indicator-row">
+            <span class="pulse-dot"></span>
+            <strong>Engine: {{ enrollmentState }}</strong>
+          </div>
+          <p class="status-msg-text">{{ hardwareStatusMessage }}</p>
         </div>
-        <div class="input-block">
-          <label>Clearance Role Target Assignment</label>
-          <select [(ngModel)]="newRuleRole">
-            <option value="Super Admin">Super Admin</option>
-            <option value="Operator">Operator</option>
-            <option value="Employee">Employee</option>
-            <option value="Contractor">Contractor</option>
-          </select>
+
+        <div class="vertical-form">
+          @if (enrollmentState === 'DISCONNECTED' || enrollmentState === 'ERROR') {
+            <button class="primary-btn-block connect-btn" (click)="initializeHardwareLink()">
+              Initialize Web Serial USB Link
+            </button>
+          } @else {
+            <div class="input-block">
+              <label>Link Physical Card to User Profile</label>
+              <select [(ngModel)]="targetCardUserId" [disabled]="enrollmentState === 'READING'">
+                <option value="" disabled selected>-- Choose Target Record --</option>
+                @for (user of availableUsers; track user.id) {
+                  <option [value]="user.id">{{ user.name }} [{{ user.id }}]</option>
+                }
+              </select>
+            </div>
+
+            @if (enrollmentState === 'READY' || enrollmentState === 'CONNECTED' || enrollmentState === 'READING') {
+              <button 
+                class="primary-btn-block inject-btn" 
+                [disabled]="!targetCardUserId || enrollmentState === 'READING'" 
+                (click)="executeCardProvisioning()">
+                {{ enrollmentState === 'READING' ? 'Writing Cryptogram...' : 'Inject Derived Encryption Keys' }}
+              </button>
+            } @else {
+              <button class="primary-btn-block reset-btn" (click)="resetHardwareForm()">
+                Clear Session Context
+              </button>
+            }
+          }
         </div>
-        <div class="input-block">
-          <label>Active Cron Scheduling Window</label>
-          <input type="text" [(ngModel)]="newRuleTime" placeholder="e.g. Mon-Sun 06:00 - 14:00" />
-        </div>
-        <button class="primary-btn-block" (click)="addRule()">Deploy Access Policy Rule</button>
       </div>
-    </div>
+
+      <div class="rule-builder">
+        <h3>Policy Engine Matrix Builder</h3>
+        <p class="subtitle">Enforce conditions bridging clearance assignments to perimeter points.</p>
+        
+        <div class="vertical-form">
+          <div class="input-block">
+            <label>Policy Strategy Rule Label</label>
+            <input type="text" [(ngModel)]="newRuleName" placeholder="e.g. Off-hours Server Diagnostics" />
+          </div>
+          <div class="input-block">
+            <label>Clearance Role Target Assignment</label>
+            <select [(ngModel)]="newRuleRole">
+              <option value="Super Admin">Super Admin</option>
+              <option value="Operator">Operator</option>
+              <option value="Employee">Employee</option>
+              <option value="Contractor">Contractor</option>
+            </select>
+          </div>
+          <div class="input-block">
+            <label>Active Cron Scheduling Window</label>
+            <input type="text" [(ngModel)]="newRuleTime" placeholder="e.g. Mon-Sun 06:00 - 14:00" />
+          </div>
+          <button class="primary-btn-block" (click)="addRule()">Deploy Access Policy Rule</button>
+        </div>
+      </div>
+      
+    </div> 
 
     <div class="rules-display-list">
       <h3>Deployed Access Rules Engine Mappings</h3>
@@ -51,5 +100,6 @@
         }
       </div>
     </div>
+
   </div>
 </div>

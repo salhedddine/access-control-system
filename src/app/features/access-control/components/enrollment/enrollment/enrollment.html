@@ -1,0 +1,54 @@
+<div class="enrollment-container">
+  <h2>Secure Card Provisioning System</h2>
+  <hr />
+
+  <div class="status-card" [ngClass]="currentState.toLowerCase()">
+    <div class="status-header">
+      <strong>Hardware Engine State:</strong> 
+      <span class="badge">{{ currentState }}</span>
+    </div>
+    <p class="status-text">{{ statusMessage }}</p>
+  </div>
+
+  <div class="control-panel">
+    
+    <div class="form-group" *ngIf="currentState === 'DISCONNECTED' || currentState === 'ERROR'">
+      <h3>Step 1: Interface Bridge Initialization</h3>
+      <button class="btn btn-primary" (click)="handleConnect()">
+        Initialize Web Serial Connection
+      </button>
+    </div>
+
+    <div class="form-group" *ngIf="currentState !== 'DISCONNECTED'">
+      <h3>Step 2: Assign Identity Schema Payload</h3>
+      
+      <label for="userSelect">Target Directory Record:</label>
+      <select 
+        id="userSelect" 
+        [(ngModel)]="selectedUserId" 
+        [disabled]="currentState === 'READING' || currentState === 'WRITING'"
+        class="form-control">
+        <option value="" disabled selected>-- Select Target Enterprise Record --</option>
+        <option *ngFor="let u of availableUsers" [value]="u.id">
+          {{ u.name }} ({{ u.role }}) - {{ u.id }}
+        </option>
+      </select>
+
+      <div class="action-buttons" *ngIf="currentState === 'READY'">
+        <button 
+          class="btn btn-success" 
+          [disabled]="!selectedUserId" 
+          (click)="handleEnrollCard()">
+          Execute Secure Cryptographic Lifecycle
+        </button>
+      </div>
+
+      <div class="action-buttons" *ngIf="currentState === 'SUCCESS' || currentState === 'ERROR'">
+        <button class="btn btn-secondary" (click)="resetForm()">
+          Acknowledge & Release Context Lock
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
